@@ -16,6 +16,11 @@ add_library(bcm_logic
 target_include_directories(bcm_logic PUBLIC include)
 target_compile_options(bcm_logic PRIVATE -Wall -Wextra -Werror)
 
+# Petit programme de test du branchement CAN
+add_executable(can_test app/can_test.c app/can_socket.c)
+target_include_directories(can_test PRIVATE app)
+target_link_libraries(can_test PRIVATE bcm_logic)
+
 # Unity (outil de test) est telecharge automatiquement
 include(FetchContent)
 FetchContent_Declare(unity
