@@ -1,0 +1,44 @@
+VERSION "1.0"
+
+NS_ :
+
+BS_:
+
+BU_: DASH BCM
+
+BO_ 256 DASH_Inputs: 5 DASH
+ SG_ Lever : 0|8@1+ (1,0) [0|2] "" BCM
+ SG_ Hazard : 8|8@1+ (1,0) [0|1] "" BCM
+ SG_ KeyLock : 16|8@1+ (1,0) [0|1] "" BCM
+ SG_ KeyUnlock : 24|8@1+ (1,0) [0|1] "" BCM
+ SG_ Ignition : 32|8@1+ (1,0) [0|1] "" BCM
+
+BO_ 257 VEH_Speed: 2 DASH
+ SG_ Speed : 0|16@1+ (1,0) [0|300] "km/h" BCM
+
+BO_ 258 ENV_Light: 2 DASH
+ SG_ Light : 0|16@1+ (1,0) [0|65535] "lux" BCM
+
+BO_ 259 DOOR_Status: 1 DASH
+ SG_ DoorOpen : 0|8@1+ (1,0) [0|1] "" BCM
+
+BO_ 260 LAMP_Diag: 2 DASH
+ SG_ BulbLeftFailed : 0|8@1+ (1,0) [0|1] "" BCM
+ SG_ BulbRightFailed : 8|8@1+ (1,0) [0|1] "" BCM
+
+BO_ 512 BCM_Lamps: 4 BCM
+ SG_ LampLeft : 0|8@1+ (1,0) [0|1] "" DASH
+ SG_ LampRight : 8|8@1+ (1,0) [0|1] "" DASH
+ SG_ Headlights : 16|8@1+ (1,0) [0|1] "" DASH
+ SG_ Siren : 24|8@1+ (1,0) [0|1] "" DASH
+
+BO_ 513 BCM_Status: 3 BCM
+ SG_ DoorsLocked : 0|8@1+ (1,0) [0|1] "" DASH
+ SG_ AlarmStatus : 8|8@1+ (1,0) [0|3] "" DASH
+ SG_ Faults : 16|8@1+ (1,0) [0|255] "" DASH
+
+CM_ BO_ 256 "Driver controls, sent every 100 ms. If missing for 500 ms the BCM enters safe mode";
+CM_ SG_ 513 Faults "Bit 0: dashboard communication lost (safe mode)";
+
+VAL_ 256 Lever 0 "OFF" 1 "LEFT" 2 "RIGHT" ;
+VAL_ 513 AlarmStatus 0 "DISARMED" 1 "ARMING" 2 "ARMED" 3 "TRIGGERED" ;
