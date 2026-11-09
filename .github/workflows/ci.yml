@@ -22,7 +22,7 @@ jobs:
       - name: 3. Installer les outils
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake cppcheck can-utils "linux-modules-extra-$(uname -r)"
+          sudo apt-get install -y cmake cppcheck can-utils
           pip install -r tests/integration/requirements.txt
 
       - name: 4. Compiler
@@ -33,10 +33,20 @@ jobs:
       - name: 5. Tests unitaires (Unity)
         run: cd build && ctest --output-on-failure
 
-      - name: 6. Creer le reseau CAN virtuel vcan0
-        run: ./scripts/setup_vcan.sh
+      - name: 6. Creer le reseau CAN virtuel vcan0 (si possible)
+        id: vcan
+        run: |
+          # Le module vcan n'existe pas pour tous les noyaux Linux des PC de GitHub.
+          sudo apt-get install -y "linux-modules-extra-$(uname -r)" || true
+          if ./scripts/setup_vcan.sh; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::vcan indisponible sur ce PC GitHub (noyau $(uname -r)) : tests d'integration CAN non lances ici."
+          fi
 
       - name: 7. Tests d'integration (pytest + python-can)
+        if: steps.vcan.outputs.ok == 'true'
         run: python -m pytest -v
 
       - name: 8. Verification MISRA C:2012
