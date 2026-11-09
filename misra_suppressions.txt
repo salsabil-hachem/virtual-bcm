@@ -1,0 +1,6 @@
+// Derogations MISRA C:2012 (une ligne par derogation, avec sa justification)
+//
+// Regle 2.5 (conseil) : "une macro ne devrait pas etre inutilisee".
+// CAN_ID_BCM_LAMPS et CAN_ID_BCM_STATUS sont utilises par app/main.c,
+// qui est hors du perimetre de l'analyse MISRA (code specifique au PC).
+misra-c2012-2.5:include/bcm_comm.h
