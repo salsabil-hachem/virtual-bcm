@@ -1,0 +1,43 @@
+# Le robot GitHub : a chaque "git push", il refait tout ce que tu fais a la main.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04          # un PC Linux tout neuf, prete par GitHub
+
+    steps:
+      - name: 1. Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: 2. Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 3. Installer les outils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake cppcheck can-utils "linux-modules-extra-$(uname -r)"
+          pip install -r tests/integration/requirements.txt
+
+      - name: 4. Compiler
+        run: |
+          cmake -B build
+          cmake --build build
+
+      - name: 5. Tests unitaires (Unity)
+        run: cd build && ctest --output-on-failure
+
+      - name: 6. Creer le reseau CAN virtuel vcan0
+        run: ./scripts/setup_vcan.sh
+
+      - name: 7. Tests d'integration (pytest + python-can)
+        run: python -m pytest -v
+
+      - name: 8. Verification MISRA C:2012
+        run: ./scripts/run_misra.sh
